@@ -41,8 +41,6 @@ export class FlairStructurePlatformAccessory {
     this.thermostatService.setPrimaryService(true);
     this.thermostatService
       .setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name)
-      .setCharacteristic(this.platform.Characteristic.CurrentTemperature, this.structure.setPointTemperatureC!)
-      .setCharacteristic(this.platform.Characteristic.TargetTemperature, this.structure.setPointTemperatureC!)
       .setCharacteristic(
         this.platform.Characteristic.TargetHeatingCoolingState,
                 this.getTargetHeatingCoolingState(this.structure)!,
@@ -51,6 +49,11 @@ export class FlairStructurePlatformAccessory {
         this.platform.Characteristic.CurrentHeatingCoolingState,
                 this.getCurrentHeatingCoolingState(this.structure)!,
       );
+    if (Number.isFinite(this.structure.setPointTemperatureC)) {
+      this.thermostatService
+        .setCharacteristic(this.platform.Characteristic.CurrentTemperature, this.structure.setPointTemperatureC!)
+        .setCharacteristic(this.platform.Characteristic.TargetTemperature, this.structure.setPointTemperatureC!);
+    }
 
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TargetTemperature)
       .on(CharacteristicEventTypes.SET, this.setTargetTemperature.bind(this))
@@ -65,22 +68,22 @@ export class FlairStructurePlatformAccessory {
       this.platform.setStructureMode(StructureHeatCoolMode.OFF).then((structure: Structure) => {
         callback(null);
         this.updateFromStructure(structure);
-      });
+      }).catch((error) => callback(error as Error));
     } else if (value === this.platform.Characteristic.TargetHeatingCoolingState.COOL) {
       this.platform.setStructureMode(StructureHeatCoolMode.COOL).then((structure: Structure) => {
         callback(null);
         this.updateFromStructure(structure);
-      });
+      }).catch((error) => callback(error as Error));
     } else if (value === this.platform.Characteristic.TargetHeatingCoolingState.HEAT) {
       this.platform.setStructureMode(StructureHeatCoolMode.HEAT).then((structure: Structure) => {
         callback(null);
         this.updateFromStructure(structure);
-      });
+      }).catch((error) => callback(error as Error));
     } else if (value === this.platform.Characteristic.TargetHeatingCoolingState.AUTO) {
       this.platform.setStructureMode(StructureHeatCoolMode.AUTO).then((structure: Structure) => {
         callback(null);
         this.updateFromStructure(structure);
-      });
+      }).catch((error) => callback(error as Error));
     }
   }
 
@@ -91,7 +94,7 @@ export class FlairStructurePlatformAccessory {
       this.updateFromStructure(structure);
       this.platform.log.debug('Set Characteristic Temperature -> ', value);
 
-    });
+    }).catch((error) => callback(error as Error));
 
   }
 
@@ -104,8 +107,6 @@ export class FlairStructurePlatformAccessory {
 
     // push the new value to HomeKit
     this.thermostatService
-      .updateCharacteristic(this.platform.Characteristic.TargetTemperature, this.structure.setPointTemperatureC!)
-      .updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.structure.setPointTemperatureC!)
       .updateCharacteristic(
         this.platform.Characteristic.TargetHeatingCoolingState,
                 this.getTargetHeatingCoolingState(this.structure)!,
@@ -114,6 +115,11 @@ export class FlairStructurePlatformAccessory {
         this.platform.Characteristic.CurrentHeatingCoolingState,
                 this.getCurrentHeatingCoolingState(this.structure)!,
       );
+    if (Number.isFinite(this.structure.setPointTemperatureC)) {
+      this.thermostatService
+        .updateCharacteristic(this.platform.Characteristic.TargetTemperature, this.structure.setPointTemperatureC!)
+        .updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.structure.setPointTemperatureC!);
+    }
 
     this.platform.log.debug(
       `Pushed updated current structure state for ${this.structure.name!} to HomeKit:`,

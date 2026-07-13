@@ -132,7 +132,8 @@ export class FlairPlatform implements DynamicPlatformPlugin {
     } catch (e) {
       this._hasValidCredentials = false;
       this.log.error(
-        'Error getting structure readings this is usually incorrect credentials, ensure you entered the right credentials.',
+        'Failed to authenticate with the Flair API. Check your Client Id / Client Secret (and username/password if using the password grant).',
+        (e as Error).message,
       );
     }
     return this._hasValidCredentials;
