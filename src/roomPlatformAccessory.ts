@@ -54,8 +54,14 @@ export class FlairRoomPlatformAccessory {
       .setCharacteristic(
         this.platform.Characteristic.CurrentHeatingCoolingState,
                 this.getCurrentHeatingCoolingStateFromStructureAndRoom(this.structure)!,
-      )
-      .setCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, this.room.currentHumidity!);
+      );
+
+    // Only expose humidity when Flair returns a valid reading. Sending undefined
+    // makes HomeKit reject the accessory, leaving it stuck "Connecting..." / "No Response".
+    if (Number.isFinite(this.room.currentHumidity)) {
+      this.thermostatService.setCharacteristic(
+        this.platform.Characteristic.CurrentRelativeHumidity, this.room.currentHumidity!);
+    }
 
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TargetTemperature)
       .on(CharacteristicEventTypes.SET, this.setTargetTemperature.bind(this))
@@ -158,7 +164,6 @@ export class FlairRoomPlatformAccessory {
     this.thermostatService
       .updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.room.currentTemperatureC!)
       .updateCharacteristic(this.platform.Characteristic.TargetTemperature, this.room.setPointC!)
-      .updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, this.room.currentHumidity!)
       .updateCharacteristic(
         this.platform.Characteristic.TargetHeatingCoolingState,
               this.getTargetHeatingCoolingStateFromStructureAndRoom(this.structure)!,
@@ -167,6 +172,10 @@ export class FlairRoomPlatformAccessory {
         this.platform.Characteristic.CurrentHeatingCoolingState,
               this.getCurrentHeatingCoolingStateFromStructureAndRoom(this.structure)!,
       );
+    if (Number.isFinite(this.room.currentHumidity)) {
+      this.thermostatService.updateCharacteristic(
+        this.platform.Characteristic.CurrentRelativeHumidity, this.room.currentHumidity!);
+    }
     this.platform.log.debug(
       `Pushed updated current temperature state for ${this.room.name!} to HomeKit:`,
             this.room.currentTemperatureC!,

@@ -1,18 +1,18 @@
 {
   "displayName": "Homebridge Flair",
-  "name": "homebridge-flair",
-  "version": "1.4.0",
+  "name": "@sfenton/homebridge-flair",
+  "version": "1.6.2",
   "description": "Brings the flair smart vents into homekit",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/keithah/homebridge-flair.git"
+    "url": "https://github.com/passionatelogic/homebridge-flair.git"
   },
   "bugs": {
-    "url": "https://github.com/keithah/homebridge-flair/issues"
+    "url": "https://github.com/passionatelogic/homebridge-flair/issues"
   },
-  "homepage": "https://github.com/keithah/homebridge-flair#readme",
-  "changelog": "https://github.com/keithah/homebridge-flair/blob/main/CHANGELOG.md",
+  "homepage": "https://github.com/passionatelogic/homebridge-flair#readme",
+  "changelog": "https://github.com/passionatelogic/homebridge-flair/blob/main/CHANGELOG.md",
   "engines": {
     "node": ">=18.0.0",
     "homebridge": ">=1.8.0"
@@ -24,6 +24,7 @@
     "watch": "npm run build && npm link && nodemon",
     "build": "rimraf ./dist && tsc",
     "clean": "rimraf ./dist",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build"
   },
   "files": [
