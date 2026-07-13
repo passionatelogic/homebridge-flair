@@ -99,7 +99,7 @@ class FlairPlatform {
         }
         catch (e) {
             this._hasValidCredentials = false;
-            this.log.error('Error getting structure readings this is usually incorrect credentials, ensure you entered the right credentials.');
+            this.log.error('Failed to authenticate with the Flair API. Check your Client Id / Client Secret (and username/password if using the password grant).', e.message);
         }
         return this._hasValidCredentials;
     }

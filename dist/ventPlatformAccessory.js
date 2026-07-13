@@ -119,7 +119,9 @@ class FlairVentPlatformAccessory {
             this.temperatureService = this.accessory.getService(this.platform.Service.TemperatureSensor)
                 ?? this.accessory.addService(this.platform.Service.TemperatureSensor);
             this.temperatureService.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name);
-            this.temperatureService.setCharacteristic(this.platform.Characteristic.CurrentTemperature, this.vent.ductTemperatureC);
+            if (Number.isFinite(this.vent.ductTemperatureC)) {
+                this.temperatureService.setCharacteristic(this.platform.Characteristic.CurrentTemperature, this.vent.ductTemperatureC);
+            }
             this.mainService.addLinkedService(this.temperatureService);
         }
         setInterval(async () => {
@@ -164,7 +166,7 @@ class FlairVentPlatformAccessory {
     updateVentReadingsFromVent(vent) {
         this.accessory.context.device = vent;
         this.vent = vent;
-        if (this.temperatureService) {
+        if (this.temperatureService && Number.isFinite(this.vent.ductTemperatureC)) {
             this.temperatureService.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.vent.ductTemperatureC);
         }
         // We fake a vent as a window covering.

@@ -8,15 +8,22 @@ reinstalls.
 
 The compiled `dist/` in this repo is the published **`@sfenton/homebridge-flair@1.6.1`**
 build (which includes the OAuth 2.0 `client_credentials` client used with a Flair
-`clientId` / `clientSecret`), with **one bug fix applied**:
+`clientId` / `clientSecret`), with the following fixes applied on top:
 
-> Room thermostats and puck sensors wrote `undefined` into HomeKit's
-> `CurrentRelativeHumidity` characteristic whenever the Flair API returned no humidity
-> reading. HomeKit requires a finite number, so it rejected the accessories, leaving
-> Flair vents stuck at "Connecting…" and then "No Response" in the Home app. All four
-> humidity writes are now guarded with `Number.isFinite()`.
+> 1. **Undefined numeric characteristics → "No Response" (the original bug).** Room,
+>    vent, puck and structure accessories wrote raw Flair readings straight into
+>    HomeKit's `CurrentRelativeHumidity` / `CurrentTemperature` / `TargetTemperature`
+>    characteristics. When Flair returns no value it is `undefined`, and HomeKit
+>    requires a finite number, so it rejected the accessory — leaving it stuck at
+>    "Connecting…" then "No Response". Every numeric write is now guarded with
+>    `Number.isFinite()`.
+> 2. **Set handlers could hang HomeKit.** Room/structure set handlers only invoked the
+>    HomeKit callback inside `.then()`; a failed Flair API call left Home spinning. A
+>    `.catch(callback)` now fails fast.
+> 3. **Clearer auth error.** `checkCredentials()` now logs the real error instead of a
+>    fixed "incorrect credentials" string.
 
-Published as version **1.6.2** so the Homebridge UI never offers to "update" backward
+Published as version **1.6.3** so the Homebridge UI never offers to "update" backward
 to the unpatched npm 1.6.1.
 
 ## Important: do not rebuild

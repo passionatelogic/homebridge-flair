@@ -32,10 +32,15 @@ class FlairRoomPlatformAccessory {
         this.thermostatService.setPrimaryService(true);
         this.thermostatService
             .setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name)
-            .setCharacteristic(this.platform.Characteristic.CurrentTemperature, this.room.currentTemperatureC)
-            .setCharacteristic(this.platform.Characteristic.TargetTemperature, this.room.setPointC)
             .setCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState, this.getTargetHeatingCoolingStateFromStructureAndRoom(this.structure))
             .setCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState, this.getCurrentHeatingCoolingStateFromStructureAndRoom(this.structure));
+        // HomeKit rejects non-finite numbers (dropping the accessory to "No Response").
+        if (Number.isFinite(this.room.currentTemperatureC)) {
+            this.thermostatService.setCharacteristic(this.platform.Characteristic.CurrentTemperature, this.room.currentTemperatureC);
+        }
+        if (Number.isFinite(this.room.setPointC)) {
+            this.thermostatService.setCharacteristic(this.platform.Characteristic.TargetTemperature, this.room.setPointC);
+        }
         // Only expose humidity when Flair returns a valid reading; sending
         // undefined makes HomeKit reject the accessory ("No Response").
         if (Number.isFinite(this.room.currentHumidity)) {
@@ -58,28 +63,28 @@ class FlairRoomPlatformAccessory {
                 this.platform.log.debug('Set Room to away', value);
                 // you must call the callback function
                 callback(null);
-            });
+            }).catch((error) => callback(error));
         }
         else if (value === this.platform.Characteristic.TargetHeatingCoolingState.COOL) {
             this.setRoomActive();
             this.platform.setStructureMode(flair_api_ts_1.StructureHeatCoolMode.COOL).then((structure) => {
                 callback(null);
                 this.updateFromStructure(structure);
-            });
+            }).catch((error) => callback(error));
         }
         else if (value === this.platform.Characteristic.TargetHeatingCoolingState.HEAT) {
             this.setRoomActive();
             this.platform.setStructureMode(flair_api_ts_1.StructureHeatCoolMode.HEAT).then((structure) => {
                 callback(null);
                 this.updateFromStructure(structure);
-            });
+            }).catch((error) => callback(error));
         }
         else if (value === this.platform.Characteristic.TargetHeatingCoolingState.AUTO) {
             this.setRoomActive();
             this.platform.setStructureMode(flair_api_ts_1.StructureHeatCoolMode.AUTO).then((structure) => {
                 callback(null);
                 this.updateFromStructure(structure);
-            });
+            }).catch((error) => callback(error));
         }
     }
     setRoomActive() {
@@ -96,7 +101,7 @@ class FlairRoomPlatformAccessory {
             this.platform.log.debug('Set Characteristic Temperature -> ', value);
             // you must call the callback function
             callback(null);
-        });
+        }).catch((error) => callback(error));
     }
     getTargetTemperature(callback) {
         this.getNewRoomReadings().then((room) => {
@@ -125,10 +130,14 @@ class FlairRoomPlatformAccessory {
         this.room = room;
         // push the new value to HomeKit
         this.thermostatService
-            .updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.room.currentTemperatureC)
-            .updateCharacteristic(this.platform.Characteristic.TargetTemperature, this.room.setPointC)
             .updateCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState, this.getTargetHeatingCoolingStateFromStructureAndRoom(this.structure))
             .updateCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState, this.getCurrentHeatingCoolingStateFromStructureAndRoom(this.structure));
+        if (Number.isFinite(this.room.currentTemperatureC)) {
+            this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.room.currentTemperatureC);
+        }
+        if (Number.isFinite(this.room.setPointC)) {
+            this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetTemperature, this.room.setPointC);
+        }
         if (Number.isFinite(this.room.currentHumidity)) {
             this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, this.room.currentHumidity);
         }
