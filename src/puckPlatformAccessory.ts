@@ -48,7 +48,9 @@ export class FlairPuckPlatformAccessory {
     this.humidityService = this.accessory.getService(this.platform.Service.HumiditySensor)
           ?? this.accessory.addService(this.platform.Service.HumiditySensor);
     this.humidityService.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name);
-    this.humidityService.setCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, this.puck.currentHumidity);
+    if (Number.isFinite(this.puck.currentHumidity)) {
+      this.humidityService.setCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, this.puck.currentHumidity);
+    }
     this.temperatureService.addLinkedService(this.humidityService);
 
     setInterval(async () => {
@@ -75,7 +77,9 @@ export class FlairPuckPlatformAccessory {
 
     // push the new value to HomeKit
     this.temperatureService.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.puck.currentTemperatureC);
-    this.humidityService.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, this.puck.currentHumidity);
+    if (Number.isFinite(this.puck.currentHumidity)) {
+      this.humidityService.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, this.puck.currentHumidity);
+    }
 
       this.accessory.getService(this.platform.Service.AccessoryInformation)!
         .updateCharacteristic(this.platform.Characteristic.FirmwareRevision, String(this.puck.firmwareVersionS));
