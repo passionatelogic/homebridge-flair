@@ -1,6 +1,7 @@
 import type { CharacteristicValue, PlatformAccessory } from 'homebridge';
 import { FlairPlatform } from './platform';
-import { Vent, Client } from '@ds-flair/flair-api-ts';
+import { Vent } from '@ds-flair/flair-api-ts';
+import { FlairApiClient } from './flairApiClient';
 export declare enum VentAccessoryType {
     WindowCovering = "windowCovering",
     Fan = "fan",
@@ -24,7 +25,7 @@ export declare class FlairVentPlatformAccessory {
     private vent;
     private client;
     private accessoryType;
-    constructor(platform: FlairPlatform, accessory: PlatformAccessory, client: Client);
+    constructor(platform: FlairPlatform, accessory: PlatformAccessory, client: FlairApiClient);
     /**
        //  * Handle "SET" requests from HomeKit
        //  * These are sent when the user changes the state of an accessory, for example, changing the Brightness

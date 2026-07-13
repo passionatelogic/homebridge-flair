@@ -20,18 +20,58 @@
         "default": ""
       },
       "username": {
-        "title": "username",
+        "title": "Username",
         "type": "string",
-        "description": "Username used to access Flair",
-        "required": true,
-        "default": ""
+        "description": "Deprecated: only needed when explicitly using the password grant type",
+        "required": false
       },
       "password": {
-        "title": "password",
+        "title": "Password",
         "type": "string",
-        "description": "Password used to access Flair",
-        "required": true,
-        "default": ""
+        "description": "Deprecated: only needed when explicitly using the password grant type",
+        "required": false
+      },
+      "grantType": {
+        "title": "Grant Type",
+        "type": "string",
+        "description": "OAuth grant to request. Default uses Flair client credentials and falls back to other flows when possible.",
+        "required": false,
+        "default": "client_credentials",
+        "oneOf": [
+          {
+            "title": "Client Credentials",
+            "enum": [
+              "client_credentials"
+            ]
+          },
+          {
+            "title": "Password",
+            "enum": [
+              "password"
+            ]
+          },
+          {
+            "title": "Auth0 Password Realm",
+            "enum": [
+              "password-realm"
+            ]
+          }
+        ]
+      },
+      "realm": {
+        "title": "Realm",
+        "type": "string",
+        "description": "Auth0 realm name when using the password realm grant type.",
+        "required": false
+      },
+      "tokenEndpoints": {
+        "title": "Token Endpoints",
+        "type": "array",
+        "description": "Override the OAuth token endpoints, ordered by priority.",
+        "required": false,
+        "items": {
+          "type": "string"
+        }
       },
       "pollInterval": {
         "title": "Poll Interval",

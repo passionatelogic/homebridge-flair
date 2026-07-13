@@ -124,7 +124,7 @@ class FlairVentPlatformAccessory {
         }
         setInterval(async () => {
             await this.getNewVentReadings();
-        }, (platform.config.pollInterval + (0, utils_1.getRandomIntInclusive)(1, 20)) * 1000);
+        }, (platform.getPollIntervalSeconds() + (0, utils_1.getRandomIntInclusive)(1, 20)) * 1000);
         this.getNewVentReadings();
     }
     /**
@@ -132,9 +132,19 @@ class FlairVentPlatformAccessory {
        //  * These are sent when the user changes the state of an accessory, for example, changing the Brightness
        //  */
     async setTargetPosition(value) {
-        const vent = await this.client.setVentPercentOpen(this.vent, value);
-        this.updateVentReadingsFromVent(vent);
-        this.platform.log.debug('Set Characteristic Percent Open -> ', value);
+        const targetPercent = value;
+        this.platform.log.info(`Vent command sent: ${this.vent.name} → target ${targetPercent}% open`);
+        try {
+            const vent = await this.client.setVentPercentOpen(this.vent, targetPercent);
+            this.updateVentReadingsFromVent(vent);
+            this.platform.log.info(`Vent command acknowledged: ${vent.name} now ${vent.percentOpen}% open`);
+            this.platform.log.debug('Set Characteristic Percent Open -> ', value);
+        }
+        catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            this.platform.log.error(`Vent command failed for ${this.vent.name}: ${message}`);
+            throw error;
+        }
     }
     async getTargetPosition() {
         const vent = await this.getNewVentReadings();

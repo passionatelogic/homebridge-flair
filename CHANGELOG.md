@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.6.0] - 2025-10-11
+
+### Changed
+- Default OAuth flow now uses Flair client credentials, removing the need to configure account usernames and passwords.
+- Added advanced grant configuration options (`grantType`, `realm`, `tokenEndpoints`) for edge cases.
+- Updated polling logic to honour a sanitized default interval when `pollInterval` is omitted.
+
+### Documentation
+- Simplified configuration instructions to highlight the new defaults and added guidance for optional OAuth settings.
+
 ## [1.4.0] - 2025-08-13
 
 ### Fixed

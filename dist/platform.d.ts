@@ -18,6 +18,8 @@ export declare class FlairPlatform implements DynamicPlatformPlugin {
     private primaryStructureAccessory?;
     private _hasValidConfig?;
     private _hasValidCredentials?;
+    private readonly pollIntervalSeconds;
+    getPollIntervalSeconds(): number;
     constructor(log: Logger, config: PlatformConfig, api: API);
     private validConfig;
     private checkCredentials;
@@ -36,6 +38,6 @@ export declare class FlairPlatform implements DynamicPlatformPlugin {
      * must not be registered again to prevent "duplicate UUID" errors.
      */
     discoverDevices(): Promise<void>;
-    addDevices(devices: [Model]): Promise<string[]>;
+    addDevices(devices: Model[]): Promise<string[]>;
 }
 //# sourceMappingURL=platform.d.ts.map

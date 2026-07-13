@@ -13,7 +13,7 @@
 
 <!-- 2. Clone (or pull) this repository from github into the same path Homebridge lives (usually `/usr/local/lib/node_modules`). Note: the code currently on GitHub is in beta, and is newer than the latest published version of this package on `npm` -->
 1. Install homebridge using: `npm install -g homebridge`
-2. Install this plug-in using: `npm install -g @ds-flair/homebridge-flair`
+2. Install this plug-in using: `npm install -g @sfenton/homebridge-flair`
 3. Update your configuration file. See example `config.json` snippet below.
 
 # Configuration
@@ -26,8 +26,6 @@ Configuration sample (edit `~/.homebridge/config.json`):
         {
             "clientId": "client_id",
             "clientSecret": "client_secret",
-            "username": "user",
-            "password": "pass",
             "pollInterval": 60,
             "platform": "Flair",
             "ventAccessoryType": "windowCovering"
@@ -39,6 +37,26 @@ Configuration sample (edit `~/.homebridge/config.json`):
 # Obtaining Credentials
 
 In order to use this plugin you will need to obtain a client id and client secret from Flair. 
+Most installs can rely on Flair's **client credentials** grant and only need the `clientId` and `clientSecret` values. Username/password support remains for legacy setups, but is no longer required.
+
+### Advanced OAuth options
+
+Optional properties are available if you need to override the default behaviour:
+
+```json
+{
+    "platform": "Flair",
+    "clientId": "client_id",
+    "clientSecret": "client_secret",
+    "grantType": "client_credentials",
+    "realm": "Username-Password-Authentication",
+    "tokenEndpoints": ["/oauth2/token", "/oauth/token"]
+}
+```
+
+- `grantType` lets you force a specific OAuth flow. Omit it to attempt client credentials first and fall back automatically.
+- `realm` only applies to the Auth0 password realm grant.
+- `tokenEndpoints` overrides the default Flair endpoints order if your account uses a custom OAuth base URL.
 
 Start by creating a Flair account at [my.flair.co](https://my.flair.co/) (if you haven't already), then use [this web form to request credentials](https://forms.gle/VohiQjWNv9CAP2ASA).
 

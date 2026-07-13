@@ -36,8 +36,8 @@ class FlairRoomPlatformAccessory {
             .setCharacteristic(this.platform.Characteristic.TargetTemperature, this.room.setPointC)
             .setCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState, this.getTargetHeatingCoolingStateFromStructureAndRoom(this.structure))
             .setCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState, this.getCurrentHeatingCoolingStateFromStructureAndRoom(this.structure));
-        // Only expose humidity when Flair returns a valid reading. Sending undefined
-        // makes HomeKit reject the accessory, leaving it stuck "Connecting..." / "No Response".
+        // Only expose humidity when Flair returns a valid reading; sending
+        // undefined makes HomeKit reject the accessory ("No Response").
         if (Number.isFinite(this.room.currentHumidity)) {
             this.thermostatService.setCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, this.room.currentHumidity);
         }
@@ -48,7 +48,7 @@ class FlairRoomPlatformAccessory {
             .on("set" /* CharacteristicEventTypes.SET */, this.setTargetHeatingCoolingState.bind(this));
         setInterval(async () => {
             await this.getNewRoomReadings();
-        }, (platform.config.pollInterval + (0, utils_1.getRandomIntInclusive)(1, 20)) * 1000);
+        }, (platform.getPollIntervalSeconds() + (0, utils_1.getRandomIntInclusive)(1, 20)) * 1000);
         this.getNewRoomReadings();
     }
     setTargetHeatingCoolingState(value, callback) {

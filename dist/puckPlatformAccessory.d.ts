@@ -1,6 +1,7 @@
 import type { PlatformAccessory } from 'homebridge';
 import { FlairPlatform } from './platform';
-import { Puck, Client } from '@ds-flair/flair-api-ts';
+import { Puck } from '@ds-flair/flair-api-ts';
+import { FlairApiClient } from './flairApiClient';
 /**
  * Platform Accessory
  * An instance of this class is created for each accessory your platform registers
@@ -14,7 +15,7 @@ export declare class FlairPuckPlatformAccessory {
     private accessoryInformationService;
     private client;
     private puck;
-    constructor(platform: FlairPlatform, accessory: PlatformAccessory, client: Client);
+    constructor(platform: FlairPlatform, accessory: PlatformAccessory, client: FlairApiClient);
     getNewPuckReadings(): Promise<Puck>;
     updatePuckReadingsFromPuck(puck: Puck): void;
 }

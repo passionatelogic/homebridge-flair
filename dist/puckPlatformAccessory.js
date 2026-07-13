@@ -40,7 +40,7 @@ class FlairPuckPlatformAccessory {
         this.temperatureService.addLinkedService(this.humidityService);
         setInterval(async () => {
             await this.getNewPuckReadings();
-        }, (platform.config.pollInterval + (0, utils_1.getRandomIntInclusive)(1, 20)) * 1000);
+        }, (platform.getPollIntervalSeconds() + (0, utils_1.getRandomIntInclusive)(1, 20)) * 1000);
         this.getNewPuckReadings();
     }
     async getNewPuckReadings() {

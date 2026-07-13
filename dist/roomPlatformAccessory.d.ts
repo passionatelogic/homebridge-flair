@@ -1,7 +1,8 @@
 import type { PlatformAccessory } from 'homebridge';
 import { CharacteristicGetCallback, CharacteristicSetCallback, CharacteristicValue } from 'homebridge';
 import { FlairPlatform } from './platform';
-import { Room, Structure, Client } from '@ds-flair/flair-api-ts';
+import { Room, Structure } from '@ds-flair/flair-api-ts';
+import { FlairApiClient } from './flairApiClient';
 /**
  * Platform Accessory
  * An instance of this class is created for each accessory your platform registers
@@ -15,7 +16,7 @@ export declare class FlairRoomPlatformAccessory {
     private client;
     private room;
     private structure;
-    constructor(platform: FlairPlatform, accessory: PlatformAccessory, client: Client, structure: Structure);
+    constructor(platform: FlairPlatform, accessory: PlatformAccessory, client: FlairApiClient, structure: Structure);
     setTargetHeatingCoolingState(value: CharacteristicValue, callback: CharacteristicSetCallback): void;
     setRoomActive(): void;
     setTargetTemperature(value: CharacteristicValue, callback: CharacteristicSetCallback): void;

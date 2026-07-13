@@ -9,6 +9,7 @@ const flair_api_ts_1 = require("@ds-flair/flair-api-ts");
 const class_transformer_1 = require("class-transformer");
 const utils_1 = require("./utils");
 const structurePlatformAccessory_1 = require("./structurePlatformAccessory");
+const flairApiClient_1 = require("./flairApiClient");
 /**
  * HomebridgePlatform
  * This class is the main constructor for your plugin, this is where you should
@@ -28,6 +29,10 @@ class FlairPlatform {
     primaryStructureAccessory;
     _hasValidConfig;
     _hasValidCredentials;
+    pollIntervalSeconds;
+    getPollIntervalSeconds() {
+        return this.pollIntervalSeconds;
+    }
     constructor(log, config, api) {
         this.log = log;
         this.config = config;
@@ -35,10 +40,22 @@ class FlairPlatform {
         this.Service = this.api.hap.Service;
         this.Characteristic = this.api.hap.Characteristic;
         this.log.debug('Finished initializing platform:', this.config.name);
+        this.pollIntervalSeconds = typeof this.config.pollInterval === 'number' && !isNaN(this.config.pollInterval)
+            ? this.config.pollInterval
+            : 60;
         if (!this.validConfig()) {
             return;
         }
-        this.client = new flair_api_ts_1.Client(this.config.clientId, this.config.clientSecret, this.config.username, this.config.password);
+        this.client = new flairApiClient_1.FlairApiClient({
+            clientId: this.config.clientId,
+            clientSecret: this.config.clientSecret,
+            username: this.config.username,
+            password: this.config.password,
+            grantType: this.config.grantType,
+            realm: this.config.realm,
+            tokenEndpoints: this.config.tokenEndpoints,
+            logger: this.log,
+        });
         // When this event is fired it means Homebridge has restored all cached accessories from disk.
         // Dynamic Platform plugins should only register new accessories after this event was fired,
         // in order to ensure they weren't added to homebridge already. This event can also be used
@@ -54,7 +71,7 @@ class FlairPlatform {
             await this.discoverDevices();
             setInterval(async () => {
                 await this.getNewStructureReadings();
-            }, (this.config.pollInterval + (0, utils_1.getRandomIntInclusive)(1, 20)) * 1000);
+            }, (this.pollIntervalSeconds + (0, utils_1.getRandomIntInclusive)(1, 20)) * 1000);
         });
     }
     validConfig() {
@@ -67,15 +84,7 @@ class FlairPlatform {
             this._hasValidConfig = false;
         }
         if (!this.config.clientSecret) {
-            this.log.error('You need to enter a Flair Client Id');
-            this._hasValidConfig = false;
-        }
-        if (!this.config.username) {
-            this.log.error('You need to enter your flair username');
-            this._hasValidConfig = false;
-        }
-        if (!this.config.password) {
-            this.log.error('You need to enter your flair password');
+            this.log.error('You need to enter a Flair Client Secret');
             this._hasValidConfig = false;
         }
         return this._hasValidConfig;
